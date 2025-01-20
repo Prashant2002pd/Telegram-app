@@ -1,16 +1,205 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>HTML 5 Boilerplate</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-      const socket = io();
-    </script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>HTML 5 Boilerplate</title>
+</head>
+
+<body>
+  <div class="heading">Tic Tac Toe<div>
+
+    <div class="playerInfo">
+      <label for="You">You:</label>  
+      <div id="playerName"></div>
+      <label for="Opponent">Opponent:</label>  
+
+      <div id="opponetName"></div>
+    </div>
+
+      <div class="Board">
+        <div id="btn1" class="grid"></div>
+        <div id="btn2" class="grid"></div>
+        <div id="btn3" class="grid"></div>
+        <div id="btn4" class="grid"></div>
+        <div id="btn5" class="grid"></div>
+        <div id="btn6" class="grid"></div>
+        <div id="btn7" class="grid"></div>
+        <div id="btn8" class="grid"></div>
+        <div id="btn9" class="grid"></div>
+
+      </div>
+
+      <div>
+        <input type="text" id="username" placeholder="Enter Username" />
+        <button id="findgame">Find Game</button>
+      </div>
+
+
+
+      <script src="/socket.io/socket.io.js"></script>
+      <script>
+
+        const socket = io();
+        let playingas;
+        let playerName;
+        let playerId;
+        let opponentId;
+        let opponetName;
+
+
+        document.getElementById("findgame").addEventListener("click", (e) => {
+          let inputName = document.getElementById("username").value;
+          socket.emit('findgame', inputName);
+        });
+
+        socket.on('startgame', (data) => {
+          console.log(data);
+          
+          playerName = data.playerName;
+          playerId = data.playerId;
+          opponentId = data.opponentId;
+          opponetName = data.opponetName;
+          playingas = data.playingas;
+          document.getElementById("findgame").style.display = "none";
+          document.getElementById("username").style.display = "none";
+          document.getElementById("playerName").innerText = playerName;
+          document.getElementById("opponetName").innerText = opponetName;
+          document.querySelector(".playerInfo").style.display = "flex";
+         
+
+
+        });
+
+        socket.on('gamestate', (gamestate) => {
+          gamestate.forEach((value, index) => {
+            const btn = document.getElementById(`btn${index + 1}`);
+            btn.innerText = value || "";
+            btn.disabled = value !== null; // Disable filled buttons
+          });
+        });
+
+
+        socket.on("gameover", ({ winner }) => {
+          if (winner === "draw") {
+            alert("The game is a draw!");
+          } else {
+            alert(`${winner} wins!`);
+          }
+        });
+
+        socket.on('move', (data) => {
+          console.log(data);
+          const { target, playingas } = data;
+          let btn = document.getElementById(target);
+          btn.innerText = playingas;
+          btn.style.style = "black";
+
+
+        });
+
+        document.querySelectorAll('.grid').forEach((grid) => {
+          grid.addEventListener('click', (e) => {
+            if (e.target.innerText === "") {
+              const target = parseInt(e.target.id.replace("btn", ""), 10) - 1;
+              socket.emit("move", { target, playingas, opponentId });
+            }
+          });
+        });
+
+
+
+
+      </script>
+
+
+
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          background-color: #252020;
+        }
+
+        .Heading {
+          color: #fff;
+          text-align: center;
+        }
+
+        .Board {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 10px;
+          width: 100%;
+          max-width: 300px;
+          margin-bottom: 20px;
+        }
+
+
+
+        .grid {
+          width: 100%;
+          aspect-ratio: 1;
+          /* Ensures squares are always square */
+          font-size: 2rem;
+          font-weight: bold;
+          color: #786d6f;
+          background: #ffffff;
+          border: 2px solid #786d6f;
+          border-radius: 10px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+
+        .grid:hover {
+          background: #ffe6eb;
+          transform: scale(1.05);
+        }
+
+        .grid:disabled {
+          color: #b0b0b0;
+          background: #f7f7f7;
+          cursor: not-allowed;
+        }
+
+
+        button{
+          padding: 10px;
+          background: #786d6f;
+          color: #fff;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+
+        input{
+          margin-bottom: 10px;
+          padding: 10px;
+
+        }
+
+        .playerInfo{
+          display: flex;
+          justify-content: space-between;
+          color: #fff;
+          display: none;
+        }
+
+        .heading{
+          color: #fff;
+          font-size: xx-large;
+          font-weight: bold;
+        }
+      </style>
+</body>
+
 </html>
