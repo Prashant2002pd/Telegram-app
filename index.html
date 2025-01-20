@@ -11,13 +11,7 @@
 <body>
   <div class="heading">Tic Tac Toe<div>
 
-    <div class="playerInfo">
-      <label for="You">You:</label>  
-      <div id="playerName"></div>
-      <label for="Opponent">Opponent:</label>  
-
-      <div id="opponetName"></div>
-    </div>
+   
 
       <div class="Board">
         <div id="btn1" class="grid"></div>
@@ -67,7 +61,7 @@
           document.getElementById("username").style.display = "none";
           document.getElementById("playerName").innerText = playerName;
           document.getElementById("opponetName").innerText = opponetName;
-          document.querySelector(".playerInfo").style.display = "flex";
+          document.querySelector(".playerInfo").style.display = "block";
          
 
 
@@ -147,7 +141,6 @@
         .grid {
           width: 100%;
           aspect-ratio: 1;
-          /* Ensures squares are always square */
           font-size: 2rem;
           font-weight: bold;
           color: #786d6f;
@@ -157,6 +150,9 @@
           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
           cursor: pointer;
           transition: all 0.2s ease;
+          text-align: center;
+          display: flex;
+          justify-content: center;
         }
 
 
@@ -188,8 +184,6 @@
         }
 
         .playerInfo{
-          display: flex;
-          justify-content: space-between;
           color: #fff;
           display: none;
         }
