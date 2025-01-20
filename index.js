@@ -42,6 +42,7 @@ io.on("connection", (socket) => {
           playerId: player.id,
           opponentId: players[1 - index].id,
           playingas: games[gameId].players[index].playingas,
+          turn: games[gameId].turn,
         });
       });
 

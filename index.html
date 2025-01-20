@@ -12,7 +12,7 @@
   <div class="heading">Tic Tac Toe<div>
 
    
-
+      <div class="turn"></div>
       <div class="Board">
         <div id="btn1" class="grid"></div>
         <div id="btn2" class="grid"></div>
@@ -29,23 +29,30 @@
       <div>
         <input type="text" id="username" placeholder="Enter Username" />
         <button id="findgame">Find Game</button>
+
       </div>
+      <div class="loading">Loading..........</div>
 
 
 
       <script src="/socket.io/socket.io.js"></script>
       <script>
-
-        const socket = io();
+document.addEventListener("DOMContentLoaded", () => {
+    
+  const socket = io();
         let playingas;
         let playerName;
         let playerId;
         let opponentId;
         let opponetName;
+        let turn;
 
 
         document.getElementById("findgame").addEventListener("click", (e) => {
           let inputName = document.getElementById("username").value;
+          document.getElementById("findgame").style.display = "none";
+          document.getElementById("username").style.display = "none";
+          document.querySelector(".loading").style.display = "block";
           socket.emit('findgame', inputName);
         });
 
@@ -57,11 +64,20 @@
           opponentId = data.opponentId;
           opponetName = data.opponetName;
           playingas = data.playingas;
-          document.getElementById("findgame").style.display = "none";
-          document.getElementById("username").style.display = "none";
-          document.getElementById("playerName").innerText = playerName;
-          document.getElementById("opponetName").innerText = opponetName;
-          document.querySelector(".playerInfo").style.display = "block";
+
+          document.querySelector(".turn").style.display = "block";
+
+          if(playingas === "X"){
+            turn = true;
+            document.querySelector(".turn").innerText = `you are X`;
+          }else{
+            turn = false;
+            document.querySelector(".turn").innerText = `you are O`;
+          }
+
+         console.log(playerName, opponetName, playingas, playerId, opponentId);
+         
+          document.querySelector(".loading").style.display = "none";
          
 
 
@@ -88,8 +104,7 @@
           console.log(data);
           const { target, playingas } = data;
           let btn = document.getElementById(target);
-          btn.innerText = playingas;
-          btn.style.style = "black";
+          
 
 
         });
@@ -103,6 +118,7 @@
           });
         });
 
+});
 
 
 
@@ -136,6 +152,12 @@
           margin-bottom: 20px;
         }
 
+        .turn {
+          color: #fff;
+          text-align: center;
+          margin-bottom: 20px;
+          display: none;
+        }
 
 
         .grid {
@@ -192,6 +214,11 @@
           color: #fff;
           font-size: xx-large;
           font-weight: bold;
+        }
+
+        .loading{
+          display: none;
+          color: #fff;
         }
       </style>
 </body>
